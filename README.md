@@ -16,7 +16,7 @@ A FastAPI-based TTS server using Microsoft's VibeVoice model for high-quality te
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/base_tts/` | TTS with default voice |
-| `GET` | `/synthesize_speech/` | TTS with custom voice |
+| `POST` | `/synthesize_speech/` | TTS with custom voice |
 | `POST` | `/upload_audio/` | Upload reference audio for voice cloning |
 | `POST` | `/change_voice/` | Voice conversion on existing audio |
 
@@ -29,13 +29,20 @@ GET /base_tts/?text=Hello%20world&speed=1.0
 - `text` (required): Text to synthesize
 - `speed` (optional, default=1.0): Speech speed (0.8-1.2)
 
-#### GET /synthesize_speech/
-```
-GET /synthesize_speech/?text=Hello%20world&voice=my_voice&speed=1.0
+#### POST /synthesize_speech/
+```bash
+curl -X POST http://localhost:7860/synthesize_speech/ \
+  -F "text=Hello world" \
+  -F "voice=my_voice" \
+  -F "speed=1.0" \
+  --output output.wav
 ```
 - `text` (required): Text to synthesize
 - `voice` (required): Voice label (must match uploaded audio)
 - `speed` (optional, default=1.0): Speech speed (0.8-1.2)
+- `diffusion_steps` (optional, default=20): Number of diffusion steps (higher = better quality, slower)
+- `cfg_scale` (optional, default=1.3): Classifier-free guidance scale
+- `seed` (optional, default=42): Random seed for reproducibility
 
 #### POST /upload_audio/
 Upload a reference audio file for voice cloning.
@@ -56,7 +63,7 @@ Run the pre-built image:
 docker run -p 7860:7860 \
   -v /path/to/models:/workspace/models/vibevoice \
   --gpus all \
-  valyriantech/vibevoice_server:latest
+  ghcr.io/ben73/vibevoice-server:latest
 ```
 
 Models are automatically downloaded on first start. To persist models across container restarts, mount a volume to `/workspace/models/vibevoice`.
