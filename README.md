@@ -63,7 +63,7 @@ Run the pre-built image:
 docker run -p 7860:7860 \
   -v /path/to/models:/workspace/models/vibevoice \
   --gpus all \
-  ghcr.io/ben73/vibevoice-server:latest
+  ghcr.io/ben73/vibevoice_server:latest
 ```
 
 Models are automatically downloaded on first start. To persist models across container restarts, mount a volume to `/workspace/models/vibevoice`.
